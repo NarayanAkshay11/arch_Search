@@ -1,0 +1,55 @@
+<!-- Include Google Fonts for Roboto -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+
+<!-- Search Input Field -->
+<div style="display: flex; align-items: center; margin: 20px 0;">
+    <input type="text" id="search-input" placeholder="Search the site..." style="flex: 1; padding: 10px; font-size: 18px; font-family: 'Roboto', sans-serif; border: 1px solid #ccc; border-radius: 5px; background-color: white;">
+    <button onclick="searchSite()" style="padding: 10px; margin-left: 10px; background-color: navy; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <img src="https://img.icons8.com/material-outlined/24/ffffff/search.png" alt="Search Icon" style="vertical-align: middle;">
+    </button>
+</div>
+
+<!-- Results will be displayed here -->
+<div id="search-results" style="margin-top: 20px;"></div>
+
+<script>
+// JavaScript function to search for a string across the site
+function searchSite() {
+  const searchTerm = document.getElementById('search-input').value.toLowerCase();
+  const pages = [
+    '/page1',    // Replace with actual page links
+    '/page2',
+    '/about',
+    '/contact',
+    '/blog/post1',
+    '/blog/post2',
+    '/services',
+    // Continue adding URLs for every page you want to include in the search
+  ];
+
+  let results = '';
+  let count = 0;
+
+  pages.forEach(page => {
+    fetch(page)
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const content = doc.body.innerText.toLowerCase();
+
+        // Check if the page content contains the search term
+        if (content.includes(searchTerm)) {
+          results += `<p><a href="${page}">${doc.title}</a></p>`;
+          count++;
+        }
+
+        // Display search results
+        if (count === pages.length) {
+          document.getElementById('search-results').innerHTML = results ? results : '<p>No results found.</p>';
+        }
+      })
+      .catch(err => console.error('Error fetching page:', err));
+  });
+}
+</script>
